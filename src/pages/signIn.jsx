@@ -1,30 +1,46 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import TextFieldForm from "../reusable elements/ReuseAbleTextField";
+import TextFieldForm from "./../reusable elements/ReuseAbleTextField.jsx";
 import "./signIn.css";
 import Logo from "../assets/Asset 2.png";
-import dataUsers from "../data/users.json";
+import dataUsers from "./../data/users.json";
+import useAuthStore from "./../store/store.js";
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const formRef = useRef(null); // Ref to access TextFieldForm's methods
+  const formRef = useRef(null);
+  const [loginError, setLoginError] = useState("");
+
+  const { login, error, isLoggedIn } = useAuthStore();
 
   const fields = [
     { name: "username", placeholder: "اسم المستخدم", type: "text" },
     { name: "password", placeholder: "كلمة السر", type: "password" },
   ];
 
-  const handleLoginSuccess = () => {
-    navigate("/dashboard"); // Redirect to dashboard on success
-  };
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn, navigate]);
 
-  const handleError = (error) => {
-    // Optional: Handle fetch error (e.g., log or display a message)
-  };
+  useEffect(() => {
+    if (error) {
+      setLoginError(error);
+    }
+  }, [error]);
 
   const handleSubmit = () => {
     if (formRef.current) {
-      formRef.current.submit(); // Trigger the form submission
+      const formData = formRef.current.getFormData();
+      const { username, password } = formData;
+
+      if (!username || !password) {
+        setLoginError("يرجى إدخال اسم المستخدم وكلمة السر");
+        return;
+      }
+
+      login(username, password, dataUsers);
     }
   };
 
@@ -36,15 +52,14 @@ const SignInPage = () => {
       </div>
       <div className="right-side">
         <h2>سجل الدخول</h2>
+        {loginError && <div className="error-message">{loginError}</div>}
         <TextFieldForm
-          ref={formRef} // Pass the ref to TextFieldForm
+          ref={formRef}
           fields={fields}
-          fetchUrl={dataUsers}
-          onFormSubmit={handleLoginSuccess} // Handle login success
-          onError={handleError}
+          hideButtons={true} // Hide buttons on the sign-in page
           formClassName="form"
           inputClassName="input-field"
-          errorClassName="error-message"
+          fieldWrapperClassName="input-wrapper"
         />
         <button onClick={handleSubmit} className="login-btn">
           تسجيل الدخول

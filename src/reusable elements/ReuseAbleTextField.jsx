@@ -1,43 +1,39 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import useAuthStore from './../store/store.js';
+
 const TextFieldForm = forwardRef(
   (
     {
       fields,
       fetchUrl,
       onFormSubmit,
-      onError,
+      onReset,
       formClassName,
       inputClassName,
-      errorClassName,
+      dropdownClassName,
+      fieldWrapperClassName,
+      buttonClassName,
+      hideButtons = false, // Add a new prop to hide buttons
     },
     ref
   ) => {
     const [formData, setFormData] = useState({});
-    const [users, setUsers] = useState([]);
-    const { login, isLoggedIn, error } = useAuthStore();
+    const [dropdownOptions, setDropdownOptions] = useState({});
 
     useEffect(() => {
-      const fetchUsers = async () => {
+      const fetchOptions = async () => {
+        if (!fetchUrl) return;
         try {
-          if (typeof fetchUrl === "string") {
-            const response = await axios.get(fetchUrl);
-            setUsers(Array.isArray(response.data) ? response.data : response.data.users || []);
-          } else if (Array.isArray(fetchUrl)) {
-            setUsers(fetchUrl);
-          } else {
-            throw new Error("Invalid fetchUrl. Must be a string URL or an array.");
-          }
-        } catch (fetchError) {
-          console.error("Failed to fetch users:", fetchError.message);
-          if (onError) onError(fetchError);
+          const response = await axios.get(fetchUrl);
+          setDropdownOptions(response.data);
+        } catch (err) {
+          console.error("Error fetching dropdown options:", err);
         }
       };
 
-      fetchUsers();
-    }, [fetchUrl, onError]);
+      fetchOptions();
+    }, [fetchUrl]);
 
     const handleChange = (e) => {
       const { name, value } = e.target;
@@ -45,42 +41,92 @@ const TextFieldForm = forwardRef(
     };
 
     const handleSubmit = () => {
-      const { username, password } = formData;
-
-      if (!username || !password) {
-        setErrorMessage("Both username and password are required.");
-        return;
-      }
-
-      login(username, password, users);
-
-      if (isLoggedIn) {
-        onFormSubmit(); // Call login success handler
+      if (onFormSubmit) {
+        onFormSubmit(formData);
       }
     };
 
-    // Expose the `submit` method to the parent component
-    useImperativeHandle(ref, () => ({
+    const handleReset = () => {
+      setFormData({});
+      if (onReset) {
+        onReset();
+      }
+    };
+
+    React.useImperativeHandle(ref, () => ({
+      getFormData: () => formData,
+      reset: handleReset,
       submit: handleSubmit,
     }));
 
     return (
-      <div>
-        {error && <p className={errorClassName}>{error}</p>}
-        <form className={formClassName}>
+      <form className={formClassName} dir="rtl">
+        <div>
           {fields.map((field, index) => (
-            <div key={index}>
-              <input
-                type={field.type || "text"}
-                placeholder={field.placeholder}
-                name={field.name}
-                onChange={handleChange}
-                className={inputClassName}
-              />
+            <div
+              key={index}
+              className={`${fieldWrapperClassName} ${
+                field.type === "dropdown" ? "dropdown-wrapper" : "input-wrapper"
+              }`}
+            >
+              {field.type === "dropdown" ? (
+                <>
+                  <label htmlFor={field.name}>{field.label}</label>
+                  <select
+                    id={field.name}
+                    name={field.name}
+                    onChange={handleChange}
+                    className={dropdownClassName}
+                    value={formData[field.name] || ""}
+                  >
+                    <option value="">{field.placeholder}</option>
+                    {(dropdownOptions[field.name] || field.options || []).map(
+                      (option, idx) => (
+                        <option key={idx} value={option.value}>
+                          {option.label}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </>
+              ) : (
+                <>
+                  <label htmlFor={field.name}>{field.label}</label>
+                  <input
+                    id={field.name}
+                    type={field.type || "text"}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    onChange={handleChange}
+                    value={formData[field.name] || ""}
+                    className={inputClassName}
+                  />
+                </>
+              )}
             </div>
           ))}
-        </form>
-      </div>
+        </div>
+
+        {/* Conditional Buttons */}
+        {!hideButtons && (
+          <div className="filter-buttons">
+            <button
+              type="button"
+              className={`${buttonClassName} apply-button`}
+              onClick={handleSubmit}
+            >
+              تطبيق الفلاتر
+            </button>
+            <button
+              type="button"
+              className={`${buttonClassName} reset-button`}
+              onClick={handleReset}
+            >
+              إعادة تعيين
+            </button>
+          </div>
+        )}
+      </form>
     );
   }
 );
@@ -89,16 +135,26 @@ TextFieldForm.propTypes = {
   fields: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
-      placeholder: PropTypes.string.isRequired,
+      label: PropTypes.string,
+      placeholder: PropTypes.string,
       type: PropTypes.string,
+      options: PropTypes.arrayOf(
+        PropTypes.shape({
+          value: PropTypes.string.isRequired,
+          label: PropTypes.string.isRequired,
+        })
+      ),
     })
   ).isRequired,
-  fetchUrl: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired, // URL or JSON array
-  onFormSubmit: PropTypes.func, // Callback for form submission
-  onError: PropTypes.func, // Callback for fetch errors
-  formClassName: PropTypes.string, // Class name for the form
-  inputClassName: PropTypes.string, // Class name for the input fields
-  errorClassName: PropTypes.string, // Class name for the error message
+  fetchUrl: PropTypes.string,
+  onFormSubmit: PropTypes.func,
+  onReset: PropTypes.func,
+  formClassName: PropTypes.string,
+  inputClassName: PropTypes.string,
+  dropdownClassName: PropTypes.string,
+  fieldWrapperClassName: PropTypes.string,
+  buttonClassName: PropTypes.string,
+  hideButtons: PropTypes.bool, // New prop for hiding buttons
 };
 
 export default TextFieldForm;

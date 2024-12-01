@@ -1,0 +1,151 @@
+/* Container Styling */
+.admin-container {
+    padding: 20px;
+    margin: 8% auto;
+    max-width: 1200px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .admin-container table {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Header Styling */
+  .admin-header {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #0056b3;
+    text-align: center;
+    padding-bottom: 15px;
+
+  }
+  
+  /* DataTable Specific Styling */
+  .mantine-DataTable-root {
+    width: 100%;
+    font-size: 15px;
+    text-align: right;
+    direction: rtl;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .mantine-DataTable-header {
+    background-color: #0056b3;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .mantine-DataTable-header th {
+    padding: 15px;
+    border-bottom: 2px solid #f8f9fa;
+  }
+  
+  .mantine-DataTable-cell {
+    padding: 12px 15px;
+    border: 1px solid #e9ecef;
+    vertical-align: middle;
+  }
+  
+  .mantine-DataTable-row {
+    transition: background-color 0.2s ease;
+  }
+  
+  .mantine-DataTable-row:nth-child(even) {
+    background-color: #f1f3f5;
+  }
+  
+  .mantine-DataTable-row:hover {
+    background-color: #e2e6ea;
+    cursor: pointer;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .admin-container {
+      padding: 15px;
+      margin: 10px;
+    }
+  
+    .admin-header {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+  
+    .mantine-DataTable-root {
+      font-size: 14px;
+    }
+  
+    .mantine-DataTable-header th,
+    .mantine-DataTable-cell {
+      padding: 8px 12px;
+    }
+  }
+  
+
+  /* admin-attendence styling */
+  .filter-row {
+    display: flex;
+    justify-content: space-between; /* Evenly distribute space between elements */
+    align-items: end; /* Align elements vertically in the center */
+    gap: 15px; /* Add spacing between fields */
+    padding: 10px; /* Add padding inside the row */
+    
+    border-radius: 8px; /* Round corners */
+    background-color: #f9f9f9; /* Light background color */
+  }
+
+  .filter-row input {
+    outline: none;
+    border: 1px #bcc1ca solid;
+  }
+
+  .filter-row > div {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .filter-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .filter-input,
+  .filter-dropdown {
+    width: 150px;
+    height: 36px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .filter-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .filter-button.apply-button {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .filter-button.reset-button {
+    background-color: #ff4d4d;
+    color: white;
+  }
+  

@@ -1,0 +1,122 @@
+    /* Container Styling */
+    .admin-container {
+        padding: 20px;
+        margin: 8% auto;
+        max-width: 1200px;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .admin-container table {
+        width: 100%;
+        text-align: center;
+
+    }
+
+    /* Header Styling */
+    .admin-header {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        color: #0056b3;
+        text-align: center;
+        padding-bottom: 15px;
+
+    }
+
+    /* DataTable Specific Styling */
+    .mantine-DataTable-root {
+        width: 100%;
+        font-size: 15px;
+        text-align: right;
+        direction: rtl;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .mantine-DataTable-header {
+        background-color: #0056b3;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .mantine-DataTable-header th {
+        padding: 15px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+
+    .mantine-DataTable-cell {
+        padding: 12px 15px;
+        border: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+
+    .mantine-DataTable-row {
+        transition: background-color 0.2s ease;
+    }
+
+    .mantine-DataTable-row:nth-child(even) {
+        background-color: #f1f3f5;
+    }
+
+    .mantine-DataTable-row:hover {
+        background-color: #e2e6ea;
+        cursor: pointer;
+    }
+
+    /* Scrollbar Handling */
+    .mantine-DataTable-root {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .mantine-DataTable-root::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .admin-container {
+            padding: 15px;
+            margin: 10px;
+        }
+
+        .admin-header {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .mantine-DataTable-root {
+            font-size: 14px;
+        }
+
+        .mantine-DataTable-header th,
+        .mantine-DataTable-cell {
+            padding: 8px 12px;
+        }
+    }
+
+    /* Accessibility and Print Styles */
+    @media print {
+        .admin-container {
+            box-shadow: none;
+            border: 1px solid #ddd;
+        }
+
+        .mantine-DataTable-row:hover {
+            background-color: transparent !important;
+        }
+    }
+
+    /* Hide the "no records" icon */
+    .mantine-datatable-empty-state svg {
+        display: none;
+        /* Hides the icon */
+    }
+
+    /* Optional: Adjust padding or layout if needed */
+    .mantine-datatable-empty-state {
+        padding-top: 0;
+    }

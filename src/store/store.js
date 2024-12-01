@@ -1,25 +1,36 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-const useAuthStore = create((set) => ({
-  user: null, // Stores the logged-in user's info
-  isLoggedIn: false, // Tracks the login status
-  error: "", // Error messages
+const useAuthStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      isLoggedIn: false,
+      error: "",
 
-  // Login function
-  login: (username, password, users) => {
-    const user = users.find(
-      (u) => u.username === username && u.password === password
-    );
+      login: (username, password, users) => {
+        const user = users.find(
+          (u) => u.username === username && u.password === password
+        );
 
-    if (user) {
-      set({ user, isLoggedIn: true, error: "" }); // Successful login
-    } else {
-      set({ error: "كلمة السر او اسم المستخدم خطأ", user: null, isLoggedIn: false }); // Login failed
-    }
-  },
+        if (user) {
+          set({ user, isLoggedIn: true, error: "" });
+        } else {
+          set({
+            error: "اسم المستخدم أو كلمة المرور غير صحيحة",
+            user: null,
+            isLoggedIn: false,
+          });
+        }
+      },
 
-  // Logout function
-  logout: () => set({ user: null, isLoggedIn: false, error: "" }),
-}));
+      logout: () => {
+        set({ user: null, isLoggedIn: false, error: "" });
+        localStorage.removeItem("auth-storage"); // Clear persisted data
+      },
+    }),
+    { name: "auth-storage" }
+  )
+);
 
 export default useAuthStore;

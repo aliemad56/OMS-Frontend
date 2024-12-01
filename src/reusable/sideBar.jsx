@@ -1,19 +1,35 @@
-import React from 'react';
-import { Icon } from '@iconify/react';
-import './../pages/dashboard.css';
-export default function SideBar() {
+import React, { useState } from "react";
+import NavBar from './navBar.jsx';
+import DynamicSidebar from "./../reusable elements/SideBarRuseable";
+import sideBarData from "./../data/sideBar.json";
+import useAuthStore from "./../store/store"; // Import logout logic
+import "./../pages/dashboard.css";
+
+export default function Dashboard() {
+  const { logout } = useAuthStore(); // Access logout function
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const handleSidebarToggle = () => {
+    setIsSidebarCollapsed((prev) => !prev);
+  };
+
   return (
-    <div className="sidebar" dir="rtl">
-      <div className="sidebar-spacer"></div>
-      <div className="sidebar-bottom">
-        <div className="menu-item">
-          <Icon icon="material-symbols:settings-outline" width="24" height="24" />
-          <h3>الإعدادات</h3>
-        </div>
-        <div className="menu-item logout">
-          <Icon icon="mdi:logout" width="24" height="24" />
-          <h5>تسجيل الخروج</h5>
-        </div>
+    <div>
+      <NavBar onSidebarToggle={handleSidebarToggle} />
+      <DynamicSidebar
+        fetchUrl={sideBarData}
+        onLogout={() => {
+          logout();
+          window.location.href = "/"; // Redirect to login
+        }}
+        sidebarClassName={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}
+        menuItemClassName="menu-item"
+        menuItemHoverClassName="menu-item-hover"
+        logoutClassName="logout"
+      />
+    
+      <div className={`dashboard-content ${isSidebarCollapsed ? "expanded" : ""}`}>
+        {/* Dashboard content goes here */}
       </div>
     </div>
   );
